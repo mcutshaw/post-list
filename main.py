@@ -50,14 +50,18 @@ def home():
                 fp = open('logs/'+request.form[item].replace('\n',''))
                 data = fp.read()
                 fp.close()
-                return render_template('home.html',names=name_list,ip="/",dats=data.split('\n'))
+                data = data.split('\n')
+                data.reverse()
+                return render_template('home.html',names=name_list,ip="/",dats=data)
                         
     return render_template('home.html',names=name_list,ip="/",dats=[])
 
 @app.route('/data',methods=["POST"])
 def data():
     ln = request.form.keys()
+    print(ln)
     for item in ln:
+        print(item)
         if item not in name_list:
             name_list.append(item)
             fp = open('logs/names','a')
@@ -70,7 +74,7 @@ def data():
             fp = open('logs/'+item,'a')
             fp.write(request.form[item]+'\n')
             fp.close()
-        return render_template('blank.html')
+    return render_template('blank.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80)
