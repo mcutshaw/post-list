@@ -1,0 +1,5 @@
+backup successful at Sun 11 Feb 16:53:39 CST 2018
+Bcurl http://75.102.176.253/data -d backups=Backup
+Backup successful at Sun 11 Feb 16:54:35 CST 2018
+Backup successful at Mon 12 Feb 23:09:24 CST 2018
+Backup successful at Tue 13 Feb 23:09:24 CST 2018
