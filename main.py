@@ -57,6 +57,7 @@ def home():
     return render_template('home.html',names=name_list,ip="/",dats=[])
 
 @app.route('/data',methods=["POST"])
+@requires_auth
 def data():
     ln = request.form.keys()
     print(ln)
