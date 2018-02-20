@@ -4,3 +4,4 @@
 *.org
 *.crt
 *.log
+logs/*
