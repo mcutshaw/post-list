@@ -5,7 +5,6 @@ from functools import wraps
 
 app = Flask(__name__)      
 
-
 name_list = []
 name = None
 fp = open('logs/names','r')
@@ -36,7 +35,6 @@ def requires_auth(f):
             return authenticate()
         return f(*args, **kwargs)
     return decorated
-
 
 @app.route('/',methods=["POST","GET"])
 @requires_auth
@@ -78,4 +76,4 @@ def data():
     return render_template('blank.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', ssl_context='adhoc')
+    app.run(host='0.0.0.0', ssl_context='adhoc', port=443)
