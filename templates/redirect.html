@@ -1,6 +1,11 @@
 <html>
     <head>
-    <meta http-equiv="refresh" content="0; url=/:443" />
+    <script type="text/javascript">
+    var loc = window.location.href+'';
+    if (loc.indexOf('http://')==0){
+    window.location.href = loc.replace('http://','https://');
+    }
+</script>
         <title>
             Post-List
         </title>
