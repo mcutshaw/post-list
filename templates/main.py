@@ -5,18 +5,15 @@ from functools import wraps
 
 app = Flask(__name__)      
 
-
-def load_namelist():
-    name_list = []
-    name = None
-    fp = open('logs/names','r')
-    while name != '':
-        name = fp.readline().replace('\n','')
-        if name == '':
-            break
-        name_list.append(name)
-    fp.close()
-    return name_list
+name_list = []
+name = None
+fp = open('logs/names','r')
+while name != '':
+    name = fp.readline().replace('\n','')
+    if name == '':
+        break
+    name_list.append(name)
+fp.close()
 
 def check_auth(username, password):
     fp = open('post-list.conf','r')
@@ -39,10 +36,9 @@ def requires_auth(f):
         return f(*args, **kwargs)
     return decorated
 
-@app.route('/postlist',methods=["POST","GET"])
-#@requires_auth
+@app.route('/',methods=["POST","GET"])
+@requires_auth
 def home():
-    name_list = load_namelist()
     if request.method == "POST":
         ln = request.form.keys()
         for item in ln:
@@ -54,12 +50,12 @@ def home():
                 fp.close()
                 data = data.split('\n')
                 data.reverse()
-                return render_template('home.html',names=name_list,ip="/postlist",dats=data)
+                return render_template('home.html',names=name_list,ip="/",dats=data)
                         
-    return render_template('home.html',names=name_list,ip="/postlist",dats=[])
+    return render_template('home.html',names=name_list,ip="/",dats=[])
 
-@app.route('/postlist/data',methods=["POST"])
-#@requires_auth
+@app.route('/data',methods=["POST"])
+@requires_auth
 def data():
     ln = request.form.keys()
     print(ln)
