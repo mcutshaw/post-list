@@ -61,6 +61,7 @@ def home():
 @app.route('/postlist/data',methods=["POST"])
 #@requires_auth
 def data():
+    name_list = load_namelist()
     ln = request.form.keys()
     print(ln)
     for item in ln:
