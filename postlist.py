@@ -1,10 +1,44 @@
 #!/usr/bin/python3
 import hashlib
+import configparser
+import sqlite3
 from flask import Flask, render_template, request, Response
 from functools import wraps
 
 app = Flask(__name__)      
 
+Config = configparser.ConfigParser()
+Config.read("postlist.conf")
+
+
+def dbconnect():
+    db = Config['Main']['Database']
+    conn = sqlite3.connect(db)
+    cur = conn.cursor()
+    cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = cur.fetchall()
+
+    if(('logs',) not in tables): 
+        cur.execute('''CREATE TABLE logs
+                        (contents TEXT,
+                        date TEXT);''')
+
+    if(('accounts',) not in tables):
+        cur.execute('''CREATE TABLE accounts
+                        (username TEXT,
+                        password TEXT);''')
+
+        print("Create a master user.")
+        username = input("Username: ")
+        password = input("Password: ")
+        password = hashlib.sha256(str(password).encode()).hexdigest()
+        cur.execute("INSERT INTO accounts VALUES(?, ?)",(username, password))
+
+    conn.commit()
+    return conn,cur
+
+def dbclose(conn):
+    conn.close()
 
 def load_namelist():
     name_list = []
@@ -19,10 +53,14 @@ def load_namelist():
     return name_list
 
 def check_auth(username, password):
-    fp = open('post-list.conf','r')
-    correct_password = fp.read().replace('\n','')
-    fp.close()
-    return username == 'admin' and password == correct_password
+    conn,cur = dbconnect()
+    cur.execute("SELECT password FROM accounts WHERE username=?",(username,))
+    db_pass = cur.fetchone()
+    dbclose(conn)
+    if db_pass !=None:
+        return password == db_pass[0]
+    else:
+        return False
 
 def authenticate():
     return Response(
@@ -81,4 +119,6 @@ def data():
     return render_template('blank.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', ssl_context='adhoc', port=443)
+    conn,cur = dbconnect()
+    dbclose(conn)
+    app.run(host='0.0.0.0', port=5000)
