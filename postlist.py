@@ -2,6 +2,7 @@
 import hashlib
 import configparser
 import sqlite3
+import datetime
 from flask import Flask, render_template, request, Response
 from functools import wraps
 
@@ -12,11 +13,19 @@ Config.read("postlist.conf")
 
 
 def dbconnect():
-    db = Config['Main']['Database']
+    try:
+        db = Config['Main']['Database']
+    except:
+        print("Config Error!")
+        exit()
     conn = sqlite3.connect(db)
     cur = conn.cursor()
     cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
     tables = cur.fetchall()
+
+    if(('headers',) not in tables): 
+        cur.execute('''CREATE TABLE headers
+                        (name text);''')
 
     if(('logs',) not in tables): 
         cur.execute('''CREATE TABLE logs
@@ -41,15 +50,14 @@ def dbclose(conn):
     conn.close()
 
 def load_namelist():
+    conn,cur = dbconnect()
+    cur.execute("SELECT name FROM headers;")
     name_list = []
-    name = None
-    fp = open('logs/names','r')
-    while name != '':
-        name = fp.readline().replace('\n','')
-        if name == '':
-            break
-        name_list.append(name)
-    fp.close()
+    headers = cur.fetchall()
+    print(headers)
+    for header in headers:
+        namelist.append(header[0])
+    dbclose(conn)
     return name_list
 
 def check_auth(username, password):
@@ -87,11 +95,12 @@ def home():
             if item == 'submit':
                 print(end='')    
             elif item == 'action':
-                fp = open('logs/'+request.form[item].replace('\n',''))
-                data = fp.read()
-                fp.close()
-                data = data.split('\n')
-                data.reverse()
+                data = []
+                conn,cur = dbconnect()
+                cur.execute("SELECT content FROM logs;")
+                for log in cur.fetchall():
+                    data.append(log[0])
+                dbclose(conn)
                 return render_template('home.html',names=name_list,ip="/postlist",dats=data)
                         
     return render_template('home.html',names=name_list,ip="/postlist",dats=[])
@@ -101,21 +110,18 @@ def home():
 def data():
     name_list = load_namelist()
     ln = request.form.keys()
+    conn,cur = dbconnect()
     print(ln)
     for item in ln:
         print(item)
         if item not in name_list:
             name_list.append(item)
-            fp = open('logs/names','a')
-            fp.write(item+'\n')
-            fp.close()
-            fp = open('logs/'+item,'w')
-            fp.write(request.form[item]+'\n')
-            fp.close()
+            cur.execute("INSERT INTO headers VALUES(?);",item)
+            cur.execute("INSERT INTO logs VALUES(?,?);",request.form[item],datetime.datetime.now())
         else:
-            fp = open('logs/'+item,'a')
-            fp.write(request.form[item]+'\n')
-            fp.close()
+            cur.execute("INSERT INTO logs VALUES(?,?);",request.form[item],datetime.datetime.now())
+    conn.commit()
+    dbclose(conn)
     return render_template('blank.html')
 
 if __name__ == '__main__':
