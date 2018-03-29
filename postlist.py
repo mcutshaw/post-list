@@ -8,12 +8,10 @@ from functools import wraps
 
 app = Flask(__name__)      
 
-Config = configparser.ConfigParser()
-Config.read("postlist.conf")
-
-
 def dbconnect():
     try:
+        Config = configparser.ConfigParser()
+        Config.read("postlist.conf")
         db = Config['Main']['Database']
     except:
         print("Config Error!")
@@ -29,7 +27,8 @@ def dbconnect():
 
     if(('logs',) not in tables): 
         cur.execute('''CREATE TABLE logs
-                        (contents TEXT,
+                        (header TEXT,
+                        contents TEXT,
                         date TEXT);''')
 
     if(('accounts',) not in tables):
@@ -56,7 +55,7 @@ def load_namelist():
     headers = cur.fetchall()
     print(headers)
     for header in headers:
-        namelist.append(header[0])
+        name_list.append(header[0])
     dbclose(conn)
     return name_list
 
@@ -97,9 +96,10 @@ def home():
             elif item == 'action':
                 data = []
                 conn,cur = dbconnect()
-                cur.execute("SELECT content FROM logs;")
+                print(request.form[item])
+                cur.execute("SELECT contents,date FROM logs WHERE header=? ORDER BY date DESC;",(request.form[item],))
                 for log in cur.fetchall():
-                    data.append(log[0])
+                    data.append(log)
                 dbclose(conn)
                 return render_template('home.html',names=name_list,ip="/postlist",dats=data)
                         
@@ -116,15 +116,11 @@ def data():
         print(item)
         if item not in name_list:
             name_list.append(item)
-            cur.execute("INSERT INTO headers VALUES(?);",item)
-            cur.execute("INSERT INTO logs VALUES(?,?);",request.form[item],datetime.datetime.now())
-        else:
-            cur.execute("INSERT INTO logs VALUES(?,?);",request.form[item],datetime.datetime.now())
+            cur.execute("INSERT INTO headers VALUES(?);",(item,))
+        cur.execute("INSERT INTO logs VALUES(?,?,?);",(item,request.form[item],datetime.datetime.now()))
     conn.commit()
     dbclose(conn)
     return render_template('blank.html')
 
 if __name__ == '__main__':
-    conn,cur = dbconnect()
-    dbclose(conn)
-    app.run(host='0.0.0.0', port=5000)
+        app.run(host='0.0.0.0', port=5000)
