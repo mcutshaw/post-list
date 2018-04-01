@@ -3,61 +3,12 @@ import hashlib
 import configparser
 import sqlite3
 import datetime
+import login
+import db
 from flask import Flask, render_template, request, Response
 from functools import wraps
 
 app = Flask(__name__)      
-
-def dbconnect():
-    try:
-        Config = configparser.ConfigParser()
-        Config.read("postlist.conf")
-        db = Config['Main']['Database']
-    except:
-        print("Config Error!")
-        exit()
-    conn = sqlite3.connect(db)
-    cur = conn.cursor()
-    cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    tables = cur.fetchall()
-
-    if(('headers',) not in tables): 
-        cur.execute('''CREATE TABLE headers
-                        (name text);''')
-
-    if(('logs',) not in tables): 
-        cur.execute('''CREATE TABLE logs
-                        (header TEXT,
-                        contents TEXT,
-                        date TEXT);''')
-
-    if(('accounts',) not in tables):
-        cur.execute('''CREATE TABLE accounts
-                        (username TEXT,
-                        password TEXT);''')
-
-        print("Create a master user.")
-        username = input("Username: ")
-        password = input("Password: ")
-        password = hashlib.sha256(str(password).encode()).hexdigest()
-        cur.execute("INSERT INTO accounts VALUES(?, ?)",(username, password))
-
-    conn.commit()
-    return conn,cur
-
-def dbclose(conn):
-    conn.close()
-
-def load_namelist():
-    conn,cur = dbconnect()
-    cur.execute("SELECT name FROM headers;")
-    name_list = []
-    headers = cur.fetchall()
-    print(headers)
-    for header in headers:
-        name_list.append(header[0])
-    dbclose(conn)
-    return name_list
 
 def check_auth(username, password):
     conn,cur = dbconnect()
