@@ -5,4 +5,5 @@
 *.crt
 *.log
 *.sql
+*__pycache__*
 logs/*

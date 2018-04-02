@@ -3,13 +3,14 @@ import hashlib
 import configparser
 import sqlite3
 import datetime
-import login
-import db
+from db import *
 from flask import Flask, render_template, request, Response
 from functools import wraps
 
 app = Flask(__name__)      
 
+conn,cur = dbconnect()
+dbclose(conn)
 def check_auth(username, password):
     conn,cur = dbconnect()
     cur.execute("SELECT password FROM accounts WHERE username=?",(username,))
@@ -36,7 +37,7 @@ def requires_auth(f):
     return decorated
 
 @app.route('/postlist',methods=["POST","GET"])
-#@requires_auth
+@requires_auth
 def home():
     name_list = load_namelist()
     if request.method == "POST":
@@ -52,12 +53,33 @@ def home():
                 for log in cur.fetchall():
                     data.append(log)
                 dbclose(conn)
-                return render_template('home.html',names=name_list,ip="/postlist",dats=data)
+                return render_template('home.html',ip="/postlist",dats=data)
                         
     return render_template('home.html',names=name_list,ip="/postlist",dats=[])
 
+@app.route('/postlist/manager',methods=["POST","GET"])
+@requires_auth
+def manager():
+    user_list = load_userlist()
+    if request.method == "POST":
+        ln = request.form.keys()
+        for item in ln:
+            if item == 'submit':
+                print(end='')    
+            elif item == 'action':
+                data = []
+                conn,cur = dbconnect()
+                print(request.form[item])
+                cur.execute("SELECT contents,date FROM logs WHERE header=? ORDER BY date DESC;",(request.form[item],))
+                for log in cur.fetchall():
+                    data.append(log)
+                dbclose(conn)
+                return render_template('manager.html',names=name_list,ip="/postlist",dats=data)
+                        
+    return render_template('manager.html',ip="/postlist/manager",dats=user_list)
+
 @app.route('/postlist/data',methods=["POST"])
-#@requires_auth
+@requires_auth
 def data():
     name_list = load_namelist()
     ln = request.form.keys()
