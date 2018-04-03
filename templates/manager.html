@@ -1,67 +1,83 @@
 <html>
-    <head>
+<head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <title>
-            Manager
-        </title>
-    </head>
-    <body>
-        <h1>
-            Manager
-        </h1>
-
-                <form action={{ip}} method="post">
-            <input type="text" name="username">
-            <input type="text" name="password">
-            <input type="text" name="role">
-            <input type="text" name="logs">
-            <button type="submit" class="btn" name="submit" value="submit">Submit</button>
-        </form>
-            <form action={{ip}} method="post">
-
-            <table class="table-bordered">
-                <tr>
-                    <th>
+    <title>
+        Manager
+    </title>
+</head>
+<body>
+    <nav>
+        <a href="/postlist">Reader</a> |
+        <a href="/postlist/manager">Manger</a> 
+    </nav> 
+    <h1>
+        Manager
+    </h1>
+    <h2>
+        New User
+    </h2>
+    <hr>
+    <form action={{ip}} method="post">
+        <table>
+            <tr>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Role</th>
+                <th>Logs</th>
+            </tr>
+            <tr>
+                <td><input type="text" name="username"></td>
+                <td><input type="password" name="password"></td>
+                <td><input type="text" name="role"></td>
+                <td><input type="text" name="logs"></td>
+                <td><button type="submit" class="btn" name="submit" value="submit">Submit</button></td>
+            </tr>
+        </table>
+    </form>
+    <hr>
+    <h2>
+        Current Users
+    </h2>
+    <hr>
+    <form action={{ip}} method="post">
+        <table class="table-bordered">
+            <tr>
+                <th>
                     Username
-                    </th>
-                    <th>
+                </th>
+                <th>
                     Password
-                    </th>
-                    <th>
+                </th>
+                <th>
                     Role
-                    </th>
-                    <th>
-                    Logs
-                    </th>
-                    <th>
-                    Delete
-                    </th>
-
-
-
+                </th>
+                <th>
+                    Logs</th>
+                    <th>Delete</th>       
                 </tr>
                 {% for dat in dats %}
                 <tr>
                     <td>
-                    {{dat[0]}}
+                        {{dat[0]}}
                     </td>
                     <td>
-                    {{dat[1]}}
+                        {{dat[1]}}
                     </td>
                     <td>
-                    {{dat[2]}}
+                        {{dat[2]}}
                     </td>
                     <td>
-                    {{dat[3]}}
+                        {{dat[3]}}
                     </td>
                     <td>
-                    <button type="submit" class="btn" name="delete" value="{{dat[0]}}">Delete</button>
+                        <button type="submit" class="btn" name="delete" value="{{dat[0]}}">Delete</button>
                     </td>
-
-
+                    
+                    
                 </tr>
                 {% endfor %}
-           </table>
-       </form>
+            </table>
+        </form>
     </body>
-</html>
+    </html>
+    

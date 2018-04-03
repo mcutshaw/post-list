@@ -30,6 +30,13 @@ def check_role(username,password,role):
         roles_list = cur.fetchone()
         dbclose(conn)
         return (roles_list[0] == role or roles_list[0] == 'all')
+def get_logs(username):
+    conn,cur = dbconnect()
+    cur.execute("SELECT logs FROM accounts WHERE username=?;",(username,))
+    logs = cur.fetchone()
+    logs = logs[0]
+    dbclose(conn)
+    return logs
 
 def check_logs(username,password,logs):
     if not check_auth(username,password):
@@ -60,26 +67,24 @@ def requires_auth(f):
 @app.route('/postlist',methods=["POST","GET"])
 @requires_auth
 def home():
-
     auth = request.authorization
-    print(check_role(auth.username, auth.password, 'reader'))
-    name_list = load_namelist()
-    if request.method == "POST":
-        ln = request.form.keys()
-        for item in ln:
-            if item == 'submit':
-                print(end='')    
-            elif item == 'action':
-                data = []
-                conn,cur = dbconnect()
-                print(request.form[item])
-                cur.execute("SELECT contents,date FROM logs WHERE header=? ORDER BY date DESC;",(request.form[item],))
-                for log in cur.fetchall():
-                    data.append(log)
-                dbclose(conn)
-                return render_template('home.html',ip="/postlist",dats=data)
-                        
-    return render_template('home.html',names=name_list,ip="/postlist",dats=[])
+    if (check_role(auth.username, auth.password, 'reader')):
+        name_list = load_namelist(get_logs(auth.username))
+        if request.method == "POST":
+            ln = request.form.keys()
+            for item in ln:
+                if item == 'action':
+                    data = []
+                    if(check_logs(auth.username, auth.password,request.form[item])):
+                        conn,cur = dbconnect()
+                        cur.execute("SELECT contents,date FROM logs WHERE header=? ORDER BY date DESC;",(request.form[item],))
+                        for log in cur.fetchall():
+                            data.append(log)
+                        dbclose(conn)
+                    return render_template('home.html',names=name_list,ip="/postlist",dats=data)
+                            
+        return render_template('home.html',names=name_list,ip="/postlist",dats=[])
+    return authenticate()
 
 @app.route('/postlist/manager',methods=["POST","GET"])
 @requires_auth
@@ -88,20 +93,21 @@ def manager():
     if(check_role(auth.username,auth.password,'manager')):
         user_list = load_userlist()
         if request.method == "POST":
-            ln = request.form.keys()
-            for item in ln:
-                print(item)
-                print(request.form[item])
-            username = request.form['username']
-            password = request.form['password']
-            role = request.form['role']
-            logs = request.form['logs']
-            new_user(username,password,role,logs)
+            ln = list(request.form.keys())
+            if('username' in ln):
+                username = request.form['username']
+                password = request.form['password']
+                role = request.form['role']
+                logs = request.form['logs']
+                new_user(username,password,role,logs)
+            elif('delete' in ln):
+                del_user(request.form['delete'])
+
             user_list = load_userlist()
             return render_template('manager.html',ip="/postlist/manager",dats=user_list)
                         
         return render_template('manager.html',ip="/postlist/manager",dats=user_list)
-    authenticate()
+    return authenticate()
 
 @app.route('/postlist/data',methods=["POST"])
 @requires_auth
@@ -112,10 +118,8 @@ def data():
         name_list = load_namelist()
         ln = request.form.keys()
         conn,cur = dbconnect()
-        print(ln)
         for item in ln:
             if(check_logs(auth.username,auth.password,item)):
-                print(item)
                 if item not in name_list:
                     name_list.append(item)
                     cur.execute("INSERT INTO headers VALUES(?);",(item,))
@@ -123,7 +127,8 @@ def data():
         conn.commit()
         dbclose(conn)
         return render_template('blank.html')
-    authenticate()
+    return authenticate()
+
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=5000)
