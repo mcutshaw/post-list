@@ -45,6 +45,12 @@ def dbconnect():
 def dbclose(conn):
     conn.close()
 
+def new_user(username,password,role,logs):
+    conn,cur = dbconnect()
+    cur.execute("INSERT INTO accounts VALUES(?, ?, ?, ?)",(username, hashlib.sha256(str(password).encode()).hexdigest(), role, logs))
+    conn.commit()
+    dbclose(conn)
+
 def load_namelist():
     conn,cur = dbconnect()
     cur.execute("SELECT name FROM headers;")
@@ -58,7 +64,7 @@ def load_namelist():
 
 def load_userlist():
     conn,cur = dbconnect()
-    cur.execute("SELECT username,password FROM accounts;")
+    cur.execute("SELECT username,password,role,logs FROM accounts;")
     user_list = []
     users = cur.fetchall()
     for user in users:

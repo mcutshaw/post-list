@@ -9,8 +9,16 @@
         <h1>
             Manager
         </h1>
-        <form action={{ip}} method="post">
+
+                <form action={{ip}} method="post">
+            <input type="text" name="username">
+            <input type="text" name="password">
+            <input type="text" name="role">
+            <input type="text" name="logs">
             <button type="submit" class="btn" name="submit" value="submit">Submit</button>
+        </form>
+            <form action={{ip}} method="post">
+
             <table class="table-bordered">
                 <tr>
                     <th>
@@ -19,6 +27,18 @@
                     <th>
                     Password
                     </th>
+                    <th>
+                    Role
+                    </th>
+                    <th>
+                    Logs
+                    </th>
+                    <th>
+                    Delete
+                    </th>
+
+
+
                 </tr>
                 {% for dat in dats %}
                 <tr>
@@ -28,10 +48,20 @@
                     <td>
                     {{dat[1]}}
                     </td>
+                    <td>
+                    {{dat[2]}}
+                    </td>
+                    <td>
+                    {{dat[3]}}
+                    </td>
+                    <td>
+                    <button type="submit" class="btn" name="delete" value="{{dat[0]}}">Delete</button>
+                    </td>
+
 
                 </tr>
                 {% endfor %}
            </table>
-        </form>
+       </form>
     </body>
 </html>
