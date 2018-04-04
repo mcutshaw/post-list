@@ -71,7 +71,7 @@ def home():
     if (check_role(auth.username, auth.password, 'reader')):
         name_list = load_namelist(get_logs(auth.username))
         if request.method == "POST":
-            ln = request.form.keys()
+            ln = list(request.form.keys())
             for item in ln:
                 if item == 'action':
                     data = []
@@ -81,9 +81,9 @@ def home():
                         for log in cur.fetchall():
                             data.append(log)
                         dbclose(conn)
-                    return render_template('home.html',names=name_list,ip="/postlist",dats=data)
+                    return render_template('home.html',names=name_list,ip="/postlist",dats=data,selected=request.form['action'])
                             
-        return render_template('home.html',names=name_list,ip="/postlist",dats=[])
+        return render_template('home.html',names=name_list,ip="/postlist",dats=[],selected=None)
     return authenticate()
 
 @app.route('/postlist/manager',methods=["POST","GET"])
@@ -120,9 +120,6 @@ def data():
         conn,cur = dbconnect()
         for item in ln:
             if(check_logs(auth.username,auth.password,item)):
-                if item not in name_list:
-                    name_list.append(item)
-                    cur.execute("INSERT INTO headers VALUES(?);",(item,))
                 cur.execute("INSERT INTO logs VALUES(?,?,?);",(item,request.form[item],datetime.datetime.now()))
         conn.commit()
         dbclose(conn)

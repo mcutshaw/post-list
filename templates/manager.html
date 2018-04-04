@@ -13,17 +13,17 @@
     <h1>
         Manager
     </h1>
-    <h2>
+    <h3>
         New User
-    </h2>
-    <hr>
+    </h3>
     <form action={{ip}} method="post">
-        <table>
+        <table class="table table-striped">
             <tr>
                 <th>Username</th>
                 <th>Password</th>
                 <th>Role</th>
                 <th>Logs</th>
+                <th></th>
             </tr>
             <tr>
                 <td><input type="text" name="username"></td>
@@ -34,13 +34,13 @@
             </tr>
         </table>
     </form>
-    <hr>
-    <h2>
+
+    <h3>
         Current Users
-    </h2>
-    <hr>
+    </h3>
+
     <form action={{ip}} method="post">
-        <table class="table-bordered">
+        <table class="table table-striped">
             <tr>
                 <th>
                     Username

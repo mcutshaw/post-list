@@ -56,11 +56,27 @@ def del_user(username):
     conn.commit()
     dbclose(conn)
 
+# def load_namelist(logs=None):
+#     conn,cur = dbconnect()
+#     cur.execute("SELECT name FROM headers;")
+#     name_list = []
+#     headers = cur.fetchall()
+#     if(logs is None or logs == 'all'):
+#         for header in headers:
+#             name_list.append(header[0])
+#     else:
+#          for header in headers:
+#             if(header[0] == logs):
+#                 name_list.append(header[0])
+#     dbclose(conn)
+#     return name_list
+
 def load_namelist(logs=None):
     conn,cur = dbconnect()
-    cur.execute("SELECT name FROM headers;")
+    cur.execute("SELECT DISTINCT header FROM logs;")
     name_list = []
     headers = cur.fetchall()
+    print(headers)
     if(logs is None or logs == 'all'):
         for header in headers:
             name_list.append(header[0])
