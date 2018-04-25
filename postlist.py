@@ -73,11 +73,12 @@ def home():
         if request.method == "POST":
             ln = list(request.form.keys())
             for item in ln:
+                print(item)
                 if item == 'action':
                     data = []
                     if(check_logs(auth.username, auth.password,request.form[item])):
                         conn,cur = dbconnect()
-                        cur.execute("SELECT contents,date FROM logs WHERE header=? ORDER BY date DESC;",(request.form[item],))
+                        cur.execute("SELECT contents,date,rowid FROM logs WHERE header=? ORDER BY date DESC;",(request.form[item],))
                         for log in cur.fetchall():
                             data.append(log)
                         dbclose(conn)

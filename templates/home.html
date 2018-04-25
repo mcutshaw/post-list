@@ -21,21 +21,26 @@
             {% endfor %}
         </select>
         <noscript><button action={{ip}} method="post">Submit</button></noscript>
+
+    </form>
         <table class="table table-striped table-sm">
             {% if dats != [] %}
             <tr>
                 <th>Log</th>
                 <th>Date</th>
+                <th>Remove</th>
             </tr>
+
             {% for dat in dats %}
             <tr>
                 <td>{{dat[0]}}</td>
                 <td>{{dat[1]}}</td>
-                
+    <form action={{ip}} id=selector method="post">
+                <td><button class=btn action={{ip}} value="{{dat[2]}}" type=submit method="post">Delete</button></td>
+            </form>
             </tr>
             {% endfor %}
             {% endif %}
         </table>
-    </form>
 </body>
 </html>
