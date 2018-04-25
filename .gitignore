@@ -8,3 +8,9 @@
 __pycache__*
 logs/*
 .vscode
+post-list/
+postlist.ini
+postlist.pyc
+postlistenv/
+wsgi.py
+wsgi.pyc
