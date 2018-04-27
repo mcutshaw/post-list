@@ -69,9 +69,9 @@ def requires_auth(f):
 def home():
     auth = request.authorization
     if (check_role(auth.username, auth.password, 'reader')):
-        name_list = load_namelist(get_logs(auth.username))
         if request.method == "POST":
             ln = list(request.form.keys())
+            print(ln)
             if "rowid" in ln and "action" in ln:
                 conn,cur = dbconnect()
                 cur.execute("DELETE FROM logs WHERE rowid=?;",(request.form["rowid"],))
@@ -79,7 +79,7 @@ def home():
                 dbclose(conn)
             if "deleteall" in ln and "action" in ln:
                 conn,cur = dbconnect()
-                cur.execute("DELETE FROM logs;",)
+                cur.execute("DELETE FROM logs WHERE header=?;",(request.form["action"],))
                 conn.commit()
                 dbclose(conn)
             if "action" in ln:
@@ -90,10 +90,10 @@ def home():
                     for log in cur.fetchall():
                         data.append(log)
                     dbclose(conn)
-
-
+            name_list = load_namelist(get_logs(auth.username))
             return render_template('home.html',names=name_list,ip="/postlist",dats=data,selected=request.form['action'])
-                            
+        
+        name_list = load_namelist(get_logs(auth.username))
         return render_template('home.html',names=name_list,ip="/postlist",dats=[],selected=None)
     return authenticate()
 

@@ -17,20 +17,20 @@
         Logger
     </h1>
     <form action={{ip}} id=selector method="post">
-        <select name="action" id="action" onchange="this.form.submit()">
+        <select name="action" style="clear: left;" id="action" onchange="this.form.submit()">
             <option value="" disabled="disabled" {% if selected==None %} selected="selected">{% endif %}None</option>
             {% for name in names %}
             <option value={{name}} {% if selected==name %} selected="selected" {% endif %}>{{name}}</option>
             {% endfor %}
         </select>
-        <form action={{ip}} id=selector method="post">
-                <input type="hidden" name="deleteall" value="">
-                <input type="hidden" name="action" value={{selected}}>
-                <button class=btn action={{ip}} type=submit method="post">Delete All</button>
-            </form>
         <noscript>
             <button action={{ip}} method="post">Submit</button>
         </noscript>
+    </form>
+    <form action={{ip}} id=selector2 method="post">
+        <input type="hidden" name="deleteall" value="">
+        <input type="hidden" name="action" value={{selected}}>
+        <button class=btn style="float: left;" action={{ip}} type=submit method="post">Delete All</button>
     </form>
 
     <table class="table table-striped table-sm">
@@ -46,7 +46,7 @@
             <td>{{dat[0]}}</td>
             <td>{{dat[1]}}</td>
             <td>
-                <form action={{ip}} id=selector method="post">
+                <form action={{ip}} id=selector3 method="post">
                     <input type="hidden" name="rowid" value={{dat[2]}}>
                     <input type="hidden" name="action" value={{selected}}>
                     <button class=btn action={{ip}} value="{{dat[2]}}" type=submit method="post">Delete</button>
