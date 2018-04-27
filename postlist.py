@@ -77,8 +77,12 @@ def home():
                 cur.execute("DELETE FROM logs WHERE rowid=?;",(request.form["rowid"],))
                 conn.commit()
                 dbclose(conn)
+            if "deleteall" in ln and "action" in ln:
+                conn,cur = dbconnect()
+                cur.execute("DELETE FROM logs;",)
+                conn.commit()
+                dbclose(conn)
             if "action" in ln:
-                print("request: " + request.form["action"])
                 data = []
                 if(check_logs(auth.username, auth.password,request.form["action"])):
                     conn,cur = dbconnect()

@@ -23,6 +23,11 @@
             <option value={{name}} {% if selected==name %} selected="selected" {% endif %}>{{name}}</option>
             {% endfor %}
         </select>
+        <form action={{ip}} id=selector method="post">
+                <input type="hidden" name="deleteall" value="">
+                <input type="hidden" name="action" value={{selected}}>
+                <button class=btn action={{ip}} type=submit method="post">Delete All</button>
+            </form>
         <noscript>
             <button action={{ip}} method="post">Submit</button>
         </noscript>
@@ -40,23 +45,16 @@
         <tr>
             <td>{{dat[0]}}</td>
             <td>{{dat[1]}}</td>
-
-
-
-
             <td>
                 <form action={{ip}} id=selector method="post">
                     <input type="hidden" name="rowid" value={{dat[2]}}>
                     <input type="hidden" name="action" value={{selected}}>
                     <button class=btn action={{ip}} value="{{dat[2]}}" type=submit method="post">Delete</button>
                 </form>
-
             </td>
-
         </tr>
         {% endfor %} {% endif %}
     </table>
-
 </body>
 
 </html>
