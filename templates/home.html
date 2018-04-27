@@ -16,7 +16,7 @@
     <h1>
         Logger
     </h1>
-    <form action={{ip}} id=selector method="post">
+    <form action={{ip}} id=selector method="post" class="btn-group">
         <select name="action" style="clear: left;" id="action" onchange="this.form.submit()">
             <option value="" disabled="disabled" {% if selected==None %} selected="selected">{% endif %}None</option>
             {% for name in names %}
@@ -27,7 +27,7 @@
             <button action={{ip}} method="post">Submit</button>
         </noscript>
     </form>
-    <form action={{ip}} id=selector2 method="post">
+    <form action={{ip}} id=selector2 method="post" class="btn-group">
         <input type="hidden" name="deleteall" value="">
         <input type="hidden" name="action" value={{selected}}>
         <button class=btn style="float: left;" action={{ip}} type=submit method="post">Delete All</button>
