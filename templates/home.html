@@ -1,46 +1,62 @@
 <html>
+
 <head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
     <title>
         Post-List
     </title>
 </head>
+
 <body>
     <nav>
         <a href="/postlist">Reader</a> |
-        <a href="/postlist/manager">Manger</a> 
-    </nav> 
+        <a href="/postlist/manager">Manger</a>
+    </nav>
     <h1>
         Logger
     </h1>
     <form action={{ip}} id=selector method="post">
         <select name="action" id="action" onchange="this.form.submit()">
-            <option value="" disabled="disabled" {% if selected == None %} selected="selected">{% endif %}None</option>
+            <option value="" disabled="disabled" {% if selected==None %} selected="selected">{% endif %}None</option>
             {% for name in names %}
-            <option value={{name}} {% if selected == name %} selected="selected"{% endif %}>{{name}}</option>
+            <option value={{name}} {% if selected==name %} selected="selected" {% endif %}>{{name}}</option>
             {% endfor %}
         </select>
-        <noscript><button action={{ip}} method="post">Submit</button></noscript>
-
+        <noscript>
+            <button action={{ip}} method="post">Submit</button>
+        </noscript>
     </form>
-        <table class="table table-striped table-sm">
-            {% if dats != [] %}
-            <tr>
-                <th>Log</th>
-                <th>Date</th>
-                <th>Remove</th>
-            </tr>
 
-            {% for dat in dats %}
-            <tr>
-                <td>{{dat[0]}}</td>
-                <td>{{dat[1]}}</td>
-    <form action={{ip}} id=selector method="post">
-                <td><button class=btn action={{ip}} value="{{dat[2]}}" type=submit method="post">Delete</button></td>
-            </form>
-            </tr>
-            {% endfor %}
-            {% endif %}
-        </table>
+    <table class="table table-striped table-sm">
+        {% if dats != [] %}
+        <tr>
+            <th>Log</th>
+            <th>Date</th>
+            <th>Remove</th>
+        </tr>
+
+        {% for dat in dats %}
+        <tr>
+            <td>{{dat[0]}}</td>
+            <td>{{dat[1]}}</td>
+
+
+
+
+            <td>
+                <form action={{ip}} id=selector method="post">
+                    <input type="hidden" name="rowid" value={{dat[2]}}>
+                    <input type="hidden" name="action" value={{selected}}>
+                    <button class=btn action={{ip}} value="{{dat[2]}}" type=submit method="post">Delete</button>
+                </form>
+
+            </td>
+
+        </tr>
+        {% endfor %} {% endif %}
+    </table>
+
 </body>
+
 </html>

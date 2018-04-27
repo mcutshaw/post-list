@@ -76,7 +76,6 @@ def load_namelist(logs=None):
     cur.execute("SELECT DISTINCT header FROM logs;")
     name_list = []
     headers = cur.fetchall()
-    print(headers)
     if(logs is None or logs == 'all'):
         for header in headers:
             name_list.append(header[0])

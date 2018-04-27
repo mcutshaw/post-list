@@ -72,17 +72,23 @@ def home():
         name_list = load_namelist(get_logs(auth.username))
         if request.method == "POST":
             ln = list(request.form.keys())
-            for item in ln:
-                print(item)
-                if item == 'action':
-                    data = []
-                    if(check_logs(auth.username, auth.password,request.form[item])):
-                        conn,cur = dbconnect()
-                        cur.execute("SELECT contents,date,rowid FROM logs WHERE header=? ORDER BY date DESC;",(request.form[item],))
-                        for log in cur.fetchall():
-                            data.append(log)
-                        dbclose(conn)
-                    return render_template('home.html',names=name_list,ip="/postlist",dats=data,selected=request.form['action'])
+            if "rowid" in ln and "action" in ln:
+                conn,cur = dbconnect()
+                cur.execute("DELETE FROM logs WHERE rowid=?;",(request.form["rowid"],))
+                conn.commit()
+                dbclose(conn)
+            if "action" in ln:
+                print("request: " + request.form["action"])
+                data = []
+                if(check_logs(auth.username, auth.password,request.form["action"])):
+                    conn,cur = dbconnect()
+                    cur.execute("SELECT contents,date,rowid FROM logs WHERE header=? ORDER BY date DESC;",(request.form["action"],))
+                    for log in cur.fetchall():
+                        data.append(log)
+                    dbclose(conn)
+
+
+            return render_template('home.html',names=name_list,ip="/postlist",dats=data,selected=request.form['action'])
                             
         return render_template('home.html',names=name_list,ip="/postlist",dats=[],selected=None)
     return authenticate()
