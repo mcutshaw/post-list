@@ -17,7 +17,7 @@
         Logger
     </h1>
     <form action={{ip}} id=selector method="post" class="btn-group">
-        <select name="action" style="clear: left;" id="action" onchange="this.form.submit()">
+        <select name="action" class="dropdown" style="clear: left;" id="action" onchange="this.form.submit()">
             <option value="" disabled="disabled" {% if selected==None %} selected="selected">{% endif %}None</option>
             {% for name in names %}
             <option value={{name}} {% if selected==name %} selected="selected" {% endif %}>{{name}}</option>
