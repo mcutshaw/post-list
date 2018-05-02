@@ -16,10 +16,6 @@ def dbconnect():
     cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
     tables = cur.fetchall()
 
-    if(('headers',) not in tables): 
-        cur.execute('''CREATE TABLE headers
-                        (name text);''')
-
     if(('logs',) not in tables): 
         cur.execute('''CREATE TABLE logs
                         (header TEXT,
@@ -50,26 +46,12 @@ def new_user(username,password,role,logs):
     cur.execute("INSERT INTO accounts VALUES(?, ?, ?, ?)",(username, hashlib.sha256(str(password).encode()).hexdigest(), role, logs))
     conn.commit()
     dbclose(conn)
+
 def del_user(username):
     conn,cur = dbconnect()
     cur.execute("DELETE FROM accounts WHERE username=?",(username,))
     conn.commit()
     dbclose(conn)
-
-# def load_namelist(logs=None):
-#     conn,cur = dbconnect()
-#     cur.execute("SELECT name FROM headers;")
-#     name_list = []
-#     headers = cur.fetchall()
-#     if(logs is None or logs == 'all'):
-#         for header in headers:
-#             name_list.append(header[0])
-#     else:
-#          for header in headers:
-#             if(header[0] == logs):
-#                 name_list.append(header[0])
-#     dbclose(conn)
-#     return name_list
 
 def load_namelist(logs=None):
     conn,cur = dbconnect()
