@@ -21,6 +21,7 @@ def check_auth(username, password):
         return password == db_pass[0]
     else:
         return False
+
 def check_role(username,password,role):
     if not check_auth(username,password):
         return false
@@ -30,6 +31,7 @@ def check_role(username,password,role):
         roles_list = cur.fetchone()
         dbclose(conn)
         return (roles_list[0] == role or roles_list[0] == 'all')
+
 def get_logs(username):
     conn,cur = dbconnect()
     cur.execute("SELECT logs FROM accounts WHERE username=?;",(username,))
